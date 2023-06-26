@@ -1,6 +1,6 @@
 
 # moreCommand
-artisan 명령어를 사용하면서 이건 왜 없을까 생각되는 기능을 추가하는 라이브러리
+add artisan command What I Want!
 <br />
 
 ## Installation

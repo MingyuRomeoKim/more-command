@@ -27,7 +27,7 @@ class MoreCommandProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/../config/moreCommand.php' => config_path('moreCommand.php'),
+            __DIR__ . '/../config/more-command.php' => config_path('more-command.php'),
         ], 'config');
     }
 }

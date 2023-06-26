@@ -1,0 +1,352 @@
+<?php
+
+namespace $$REPOSITORY_NAMESPACE$$\BaseTemplate;
+
+use $$REPOSITORY_NAMESPACE$$\BaseTemplate\RepositoryInterface;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+
+class BaseRepository implements RepositoryInterface
+{
+    protected Model $model;
+
+    protected $connection = null;
+
+    protected $cache_prefix = 'model';
+
+    protected $cacheTtl = 60;
+
+    protected $cacheChangeTtl = 10;
+
+    public function __construct(Model $model)
+    {
+        $this->model = $model;
+    }
+
+    public function setConnection($connection)
+    {
+        $this->connection = $connection;
+        return $this;
+    }
+
+    protected function getModel()
+    {
+        if (empty($this->connection)) {
+            return $this->model;
+        }
+
+        return $this->model->setConnection($this->connection);
+    }
+
+    protected function query()
+    {
+        $this->newQuery();
+    }
+
+    protected function getQuery()
+    {
+        if (empty($this->connection)) {
+            return $this->model->query();
+        }
+
+        return $this->model->on($this->connection)->getQuery();
+    }
+
+    protected function newQuery()
+    {
+        if (empty($this->connection)) {
+            return $this->model->newQuery();
+        }
+
+        return $this->model->setConnection($this->connection)->newQuery();
+    }
+
+    public function findById($id, array $columns = ['*'], array $relations = [])
+    {
+        return $this->getModel()->with($relations)->find($id, $columns);
+    }
+
+    public function all(array $columns = ['*'], array $relations = [])
+    {
+        return $this->getModel()->with($relations)->get($columns);
+    }
+
+    public function paginate($perPages, array $columns = ['*'], array $relations = [])
+    {
+        return $this->getModel()->select($columns)->with($relations)->orderByDesc($this->model->getKeyName())->paginate($perPages);
+    }
+
+    public function create(array $attributes)
+    {
+        return $this->newQuery()->create($attributes);
+    }
+
+    public function firstOrNew(array $attributes = [], array $values = [])
+    {
+        return $this->newQuery()->firstOrNew($attributes, $values);
+    }
+
+    public function firstOrCreate(array $attributes = [], array $values = [])
+    {
+        return $this->newQuery()->firstOrCreate($attributes, $values);
+    }
+
+    public function updateOrCreate(array $attributes, array $values = [])
+    {
+        return $this->newQuery()->updateOrCreate($attributes, $values);
+    }
+
+    public function insert($arrItems)
+    {
+        return $this->newQuery()->insert($arrItems);
+    }
+
+    public function update($id, array $attributes)
+    {
+        // id는 수정할 수 없음 - $fillable에 id가 들어갈경우 처리 해줘야됨
+        if (isset($attributes[$this->model->getKeyName()])) {
+            unset($attributes[$this->model->getKeyName()]);
+        }
+
+        return $this->newQuery()->where($this->model->getKeyName(), $id)->update($attributes);
+    }
+
+    public function log($id, $logType, array $attributes)
+    {
+        // id는 수정할 수 없음 - $fillable에 id가 들어갈경우 처리 해줘야됨
+        if (isset($attributes[$this->model->getKeyName()])) {
+            unset($attributes[$this->model->getKeyName()]);
+        }
+
+        return true;
+    }
+
+    public function delete($ids)
+    {
+        if (is_array($ids)) {
+            return $this->newQuery()->whereIn($this->model->getKeyName(), $ids)->delete();
+        }
+
+        return $this->newQuery()->where($this->model->getKeyName(), $ids)->delete();
+    }
+
+    /**
+     * 클래스명 가져오기
+     *
+     * @param $className
+     * @return false|string
+     */
+    protected function getClassName($className)
+    {
+        return substr($className, strrpos($className, '\\') + 1);
+    }
+
+    /**
+     * 캐시 키 작성
+     * @param $function
+     * @param null $param
+     * @param null $limit
+     * @return string
+     */
+    protected function getCacheKey($function, $param = null, $limit = null)
+    {
+        $key = $this->cache_prefix . '_' . $this->camel_to_snake($function);
+        if (!empty($param)) {
+            $key .= '_param_' . $param;
+        }
+        if (!empty($limit)) {
+            $key .= '_limit_' . $limit;
+        }
+        return $key;
+    }
+
+    /**
+     * 기본 캐싱 (redis)
+     *
+     * @param string $key
+     * @param $ttl
+     * @param \Closure $callback
+     * @return mixed|null
+     */
+    protected function remember(string $key, $ttl, \Closure $callback)
+    {
+        $value = Cache::get($key);
+
+        if (!is_null($value)) {
+            return $value;
+        }
+
+        try {
+            // 실행
+            $value = $callback();
+
+            // 캐싱
+            Cache::set($key, $value, $ttl);
+
+            return $value;
+        } catch (\Exception $e) {
+            Log::error('DB ERROR - ' . $key . ' - ' . $e->getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * insert Cache
+     *
+     * @param $cacheKey
+     * @param $item
+     * @param null $cacheData
+     * @return mixed
+     */
+    protected function insertRemember($cacheKey, $item, $cacheData = null)
+    {
+
+        $ttl = $this->cacheChangeTtl;
+
+        if ($cacheData == null) {
+            $cacheData = Cache::get($cacheKey);
+        }
+
+        if (!empty($cacheData)) {
+            // 혹시 데이터가 이미 있으면 update 해줌
+            $seq = null;
+            foreach ($cacheData as $i => $cacheItem) {
+                if ($item->id == $cacheItem->id) {
+                    $seq = $i;
+                    break;
+                }
+            }
+
+            if (!is_null($seq)) {
+                $cacheData[$seq] = $item;
+                Cache::set($cacheKey, $cacheData, $ttl);
+                return $cacheData;
+            }
+
+            // 업데이트 된 데이터를 캐시 데이터에 병합합니다.
+            $cacheData->prepend($item);
+
+            // 캐시 데이터를 다시 저장합니다.
+            Cache::set($cacheKey, $cacheData, $ttl);
+        }
+
+        return $cacheData;
+    }
+
+    /**
+     * update Cache
+     * @param $cacheKey
+     * @param $item
+     * @param null $cacheData
+     * @return mixed
+     */
+    protected function updateRemember($cacheKey, $item, $cacheData = null)
+    {
+
+        $ttl = $this->cacheChangeTtl;
+
+        if ($cacheData == null) {
+            $cacheData = Cache::get($cacheKey);
+        }
+
+        if (!empty($cacheData)) {
+            $seq = null;
+            foreach ($cacheData as $i => $cacheItem) {
+                if ($item->id == $cacheItem->id) {
+                    $seq = $i;
+                    break;
+                }
+            }
+
+            if (!is_null($seq)) {
+                $cacheData[$seq] = $item;
+                Cache::set($cacheKey, $cacheData, $ttl);
+            }
+        }
+
+        return $cacheData;
+    }
+
+    /**
+     * delete Cache
+     * @param $cacheKey
+     * @param $ids
+     * @param null $cacheData
+     * @return mixed
+     */
+    protected function deleteRemember($cacheKey, $ids, $cacheData = null)
+    {
+
+        $ttl = $this->cacheChangeTtl;
+
+        if (!is_array($ids)) {
+            $ids = [$ids];
+        }
+
+        if ($cacheData == null) {
+            $cacheData = Cache::get($cacheKey);
+        }
+
+        if (!empty($cacheData)) {
+            $count = count($cacheData);
+            for ($i = $count - 1; $i >= 0; $i--) {
+                if (!isset($cacheData[$i])) {
+                    continue;
+                }
+                $cacheItem = $cacheData[$i];
+                if (in_array($cacheItem->id, $ids)) {
+                    unset($cacheData[$i]);
+                }
+            }
+
+            $cacheData = $cacheData->values();
+
+            Cache::put($cacheKey, $cacheData, $ttl);
+        }
+
+        return $cacheData;
+    }
+
+    /**
+     * 캐시 삭제
+     * @param $cacheKey
+     * @param int $delay
+     * @return bool
+     */
+    protected function clearCache($cacheKey, $delay = 0)
+    {
+        if (empty($cacheKey)) {
+            return false;
+        }
+
+        if ($delay > 0) {
+            $cacheData = Cache::get($cacheKey);
+            return Cache::put($cacheKey, $cacheData, $delay);
+        }
+
+        return Cache::delete($cacheKey);
+    }
+
+
+    protected function camel_to_snake($input)
+    {
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $input));
+    }
+
+    /**
+     * 현재 페이지에서 page 파라메터 제외
+     *
+     * @return string
+     */
+    protected function getFullUrlForPage()
+    {
+        $url = request()->fullUrl();
+        $queryString = parse_url($url, PHP_URL_QUERY);
+        parse_str($queryString, $queryParams);
+        $filteredParams = Arr::except($queryParams, ['page']);
+        return strtok($url, '?') . '?' . http_build_query($filteredParams);
+    }
+}

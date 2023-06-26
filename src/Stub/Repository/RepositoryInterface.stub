@@ -1,0 +1,26 @@
+<?php
+
+namespace $$REPOSITORY_NAMESPACE$$\BaseTemplate;
+
+interface RepositoryInterface
+{
+    public function findById($id , array $columns = ['*'], array $relations = []);
+
+    public function all(array $columns = ['*'], array $relations = []);
+
+    public function paginate($perPages, array $columns = ['*'], array $relations = []);
+
+    public function create(array $attributes);
+
+    public function firstOrNew(array $attributes = [], array $values = []);
+
+    public function firstOrCreate(array $attributes = [], array $values = []);
+
+    public function updateOrCreate(array $attributes, array $values = []);
+
+    public function insert($arrItems);
+
+    public function update($id, array $attributes);
+
+    public function delete($id);
+}

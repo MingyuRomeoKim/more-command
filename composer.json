@@ -1,0 +1,30 @@
+{
+    "name": "mingyukim/more-command",
+    "description": "artisan 명령어를 사용하면서 이건 왜 없을까 생각되는 기능을 추가하는 라이브러리.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "MingyuRomeoKim",
+            "email": "rlaalsrb0466@naver.com",
+            "homepage": "https://kimmingyu.co.kr",
+            "role": "Developer"
+        }
+    ],
+    "type": "library",
+    "require": {
+        "php": ">=8.0.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MingyuKim\\MoreCommand\\MoreCommandProvider"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "MingyuKim\\MoreCommand\\": "src/"
+        },
+        "classmap": ["src/"]
+    }
+}

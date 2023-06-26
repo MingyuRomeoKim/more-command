@@ -1,5 +1,5 @@
 
-# moreCommand
+# more-command
 add artisan command What I Want!
 <br />
 

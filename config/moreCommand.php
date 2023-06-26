@@ -15,4 +15,5 @@ return [
     */
     'repository-namespace' => 'App',
 
+
 ];

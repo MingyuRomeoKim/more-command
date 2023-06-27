@@ -8,6 +8,6 @@ abstract class BaseCommand extends Command
 {
     public function getRepositoryNamespace()
     {
-        return config('moreCommand.repository-namespace') ?? 'App';
+        return config('more-command.repository-namespace') ?? 'App';
     }
 }

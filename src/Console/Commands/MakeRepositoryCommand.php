@@ -2,7 +2,88 @@
 
 namespace MingyuKim\MoreCommand\Console\Commands;
 
-class MakeRepositoryCommand extends  BaseCommand
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
+use MingyuKim\MoreCommand\Helper\ContentMaker;
+use MingyuKim\MoreCommand\Helper\FileMaker;
+use MingyuKim\MoreCommand\Helper\RepositoryHelper;
+
+class MakeRepositoryCommand extends BaseCommand
 {
+    protected string $repository_namespace;
+    protected string $repository_path;
+    protected string $base_repository_class;
+    protected string $base_repository_interface;
+    protected RepositoryHelper $repositoryHelper;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->repository_namespace = $this->getRepositoryNamespace() . "\Repositories";
+        $this->repository_path = "/" . strtolower($this->getRepositoryNamespace()) . "/Repositories";
+        $this->base_repository_class = "BaseRepository.php";
+        $this->base_repository_interface = "RepositoryInterface.php";
+    }
+
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'make:repository {repositoryName}';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'repositoryName 이름의 레포지토리를 생성한다.
+                                repositoryName (예시) TestRepository || Test/TestRepository ';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle()
+    {
+        $repositoryName = $this->argument('repositoryName');
+
+        if (empty($repositoryName)) {
+            dump("You must have repositoryName option");
+            Command::FAILURE;
+        }
+
+        try {
+            $this->repositoryHelper = new RepositoryHelper($this->repository_namespace, $this->repository_path, $this->base_repository_class, $this->base_repository_interface, $print);
+
+            // [step 1] check base interface & Class
+            $this->repositoryHelper->checkDefaultClassAndInterface();
+
+            // [step 2] create repository file
+            if (strpos($repositoryName, "/") > -1) {
+                $dumpArray = explode("/", $repositoryName);
+                $dumpRepositoryName = array_pop($dumpArray);
+                $model_name = str_replace("Repository", "", $dumpRepositoryName);
+                $model_namespace = implode("\\", $dumpArray);
+                $repositoryName = $dumpRepositoryName;
+
+            } else {
+                $model_name = str_replace("Repository", "", $repositoryName);
+                $model_namespace = $model_name;
+            }
+
+            $repository_file_content = $this->repositoryHelper->getRepositoryTemplateContents($model_name, $model_namespace, $repositoryName);
+            $repository_real_path = base_path() . $this->repository_path . "/" . $repositoryName . ".php";
+
+            if ($this->option('print')) {
+                dump($repository_file_content);
+            } else {
+                (new FileMaker($repository_real_path, $repository_file_content))->generate();
+            }
+        } catch (\Exception $exception) {
+            dump($exception->getMessage());
+            Command::FAILURE;
+        }
+
+    }
 
 }

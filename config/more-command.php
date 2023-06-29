@@ -18,4 +18,18 @@ return [
     'repository-namespace' => 'App',
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | Trait namespace
+    |
+    | Default Value = 'App'
+    |--------------------------------------------------------------------------
+    |
+    | This valu$e defines the default namespace for created Traits.
+    | For example if the value is 'App', it will create Traits
+    | inside 'App/Traits' and class namespace will
+    | 'App/Traits/{TraitName}'.
+    |
+    */
+    'trait-namespace' => 'App',
 ];

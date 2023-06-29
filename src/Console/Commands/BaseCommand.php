@@ -10,4 +10,9 @@ abstract class BaseCommand extends Command
     {
         return config('more-command.repository-namespace') ?? 'App';
     }
+
+    public function getTraitNamespace()
+    {
+        return config('more-command.trait-namespace') ?? 'App';
+    }
 }

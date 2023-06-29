@@ -28,6 +28,7 @@ Or add the following to your composer.json's require-dev section and `composer u
 <?php
 return [
     'repository-namespace' => 'App', // Your Desire Namespace for Repository Classes   
+    'trait-namespace' => 'App', // Your Desire Namespace for Traits   
 ];
 ```
 
@@ -45,6 +46,16 @@ php artisan make:repositories
 
 __Create a repository Class.__\
 `php artisan make:repository {repositoryName} {--print}`
+
+Example:
+```
+php artisan make:repository TestRepository
+```
+
+## Make Each Trait
+
+__Create a Trait.__\
+`php artisan make:trait {triatName} {--print}`
 
 Example:
 ```

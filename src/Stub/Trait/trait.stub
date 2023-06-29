@@ -1,0 +1,8 @@
+<?php
+
+namespace $$TRAIT_NAMESPACE$$;
+
+trait $$TRAIT_NAME$$
+{
+
+}

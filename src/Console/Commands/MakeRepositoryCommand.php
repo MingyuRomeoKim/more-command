@@ -10,17 +10,13 @@ class MakeRepositoryCommand extends BaseCommand
 {
     protected string $repository_namespace;
     protected string $repository_path;
-    protected string $base_repository_class;
-    protected string $base_repository_interface;
     protected RepositoryHelper $repositoryHelper;
 
     public function __construct()
     {
         parent::__construct();
-        $this->repository_namespace = $this->getRepositoryNamespace() . "\Repositories";
-        $this->repository_path = "/" . strtolower($this->getRepositoryNamespace()) . "/Repositories";
-        $this->base_repository_class = "BaseRepository.php";
-        $this->base_repository_interface = "RepositoryInterface.php";
+        $this->repository_namespace = $this->getRepositoryBaseNamespace();
+        $this->repository_path = $this->getRepositoryBasePath();
     }
 
     /**
@@ -45,6 +41,7 @@ class MakeRepositoryCommand extends BaseCommand
     {
         $repositoryName = $this->argument('repositoryName');
         $print = $this->option('print');
+
         if (empty($repositoryName)) {
             dump("You must have repositoryName option");
             Command::FAILURE;
@@ -52,7 +49,7 @@ class MakeRepositoryCommand extends BaseCommand
 
         try {
             // [step 1] check base interface & Class
-            $this->repositoryHelper = new RepositoryHelper($this->repository_namespace, $this->repository_path, $this->base_repository_class, $this->base_repository_interface, $print);
+            $this->repositoryHelper = new RepositoryHelper($this->repository_namespace, $this->repository_path, $print);
             $this->repositoryHelper->checkDefaultClassAndInterface();
 
             // [step 2] init properties
@@ -77,6 +74,7 @@ class MakeRepositoryCommand extends BaseCommand
 
             if ($print) {
                 dump($repository_file_content);
+                dump($repository_real_path);
             } else {
                 (new FileMaker($repository_real_path, $repository_file_content))->generate();
             }

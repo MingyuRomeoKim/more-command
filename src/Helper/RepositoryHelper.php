@@ -9,28 +9,24 @@ class RepositoryHelper
     protected string $repository_namespace;
     protected string $repository_default_namespace;
     protected string $repository_path;
-    protected string $base_repository_class;
-    protected string $base_repository_interface;
     protected string $print;
 
     protected const BASE_TEMPLATE_PATH = "BaseTemplate";
+    protected const BASE_REPOSITORY_CLASS = "BaseRepository.php";
+    protected const BASE_REPOSITORY_INTERFACE = "RepositoryInterface.php";
 
     public function __construct
     (
         string $repository_namespace,
         string $repository_path,
-        string $base_repository_class,
-        string $base_repository_interface,
         string $print = ''
     )
     {
         $this->repository_namespace = $repository_namespace;
         $this->repository_path = $repository_path;
-        $this->base_repository_class = $base_repository_class;
-        $this->base_repository_interface = $base_repository_interface;
         $this->print = $print;
 
-        $this->repository_default_namespace = config('more-command.repository-namespace') ? config('more-command.repository-namespace'). "\Repositories" : 'App\Repositories' ;
+        $this->repository_default_namespace = config('more-command.repository-namespace') ? config('more-command.repository-namespace') . "\Repositories" : 'App\Repositories';
     }
 
     /**
@@ -54,9 +50,9 @@ class RepositoryHelper
 
         $base_template_file = base_path() . $this->repository_path . "/" . self::BASE_TEMPLATE_PATH . "/";
 
-        if (!$this->checkBaseTemplateFile($base_template_file, $this->base_repository_class)) {
+        if (!$this->checkBaseTemplateFile($base_template_file, self::BASE_REPOSITORY_CLASS)) {
             $baseRepositoryClassContent = $this->getBaseClassTemplateContents();
-            $base_repository_class_path = $base_template_file . $this->base_repository_class;
+            $base_repository_class_path = $base_template_file . self::BASE_REPOSITORY_CLASS;
             $result = (new FileMaker($base_repository_class_path, $baseRepositoryClassContent))->generate();
 
             if ($this->print) {
@@ -64,9 +60,9 @@ class RepositoryHelper
             }
         }
 
-        if (!$this->checkBaseTemplateFile($base_template_file, $this->base_repository_interface)) {
+        if (!$this->checkBaseTemplateFile($base_template_file, self::BASE_REPOSITORY_INTERFACE)) {
             $baseRepositoryInterfaceContent = $this->getBaseInterfaceTemplateContent('');
-            $base_repository_interface_path = $base_template_file . $this->base_repository_interface;
+            $base_repository_interface_path = $base_template_file . self::BASE_REPOSITORY_INTERFACE;
             $result = (new FileMaker($base_repository_interface_path, $baseRepositoryInterfaceContent))->generate();
 
             if ($this->print) {

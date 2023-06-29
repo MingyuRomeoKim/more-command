@@ -12,17 +12,13 @@ class MakeRepositoriesCommand extends BaseCommand
 {
     protected string $repository_namespace;
     protected string $repository_path;
-    protected string $base_repository_class;
-    protected string $base_repository_interface;
     protected RepositoryHelper $repositoryHelper;
 
     public function __construct()
     {
         parent::__construct();
-        $this->repository_namespace = $this->getRepositoryNamespace() . "\Repositories";
-        $this->repository_path = "/" . strtolower($this->getRepositoryNamespace()) . "/Repositories";
-        $this->base_repository_class = "BaseRepository.php";
-        $this->base_repository_interface = "RepositoryInterface.php";
+        $this->repository_namespace = $this->getRepositoryBaseNamespace();
+        $this->repository_path = $this->getRepositoryBasePath();
     }
 
     /**
@@ -46,7 +42,7 @@ class MakeRepositoriesCommand extends BaseCommand
     public function handle()
     {
         $print = $this->option('print');
-        $this->repositoryHelper = new RepositoryHelper($this->repository_namespace, $this->repository_path, $this->base_repository_class, $this->base_repository_interface, $print);
+        $this->repositoryHelper = new RepositoryHelper($this->repository_namespace, $this->repository_path, $print);
 
         try {
             // [step 1] init
@@ -57,37 +53,38 @@ class MakeRepositoriesCommand extends BaseCommand
             $this->repositoryHelper->checkDefaultClassAndInterface();
 
             // [step 3] redefine repository fileName and relativePath
-            $repositoryRelativePathNames = array_map(function ($value) {
+            $relativePathnameInRepositories = array_map(function ($value) {
                 return str_replace(".php", "Repository.php", $value);
             }, $relativePathnameInModels);
-            $repositoryFileNames = array_map(function ($value) {
+            $filenameInRepositories = array_map(function ($value) {
                 return str_replace(".php", "Repository.php", $value);
             }, $filenameInModels);
 
-
             // [step 4] create repository class using models
-            foreach ($repositoryRelativePathNames as $index => $repositoryRelativePathName) {
+            foreach ($relativePathnameInRepositories as $index => $repositoryRelativePathName) {
                 $model_name = str_replace(".php", "", $filenameInModels[$index]);
-                $model_namespace = str_replace(".php", "", $relativePathnameInModels[$index]);
+                $model_path = str_replace(".php", "", $relativePathnameInModels[$index]);
+                $model_namespace = str_replace("/", "\\", $model_path);
 
-                $repository_name = str_replace(".php", "", $repositoryFileNames[$index]);
+                $repository_name = str_replace(".php", "", $filenameInRepositories[$index]);
+                $repository_namespace = $this->repository_namespace;
+                $repository_path = $this->repository_path;
 
-                if ($model_name !== $model_namespace) {
-                    $more_directory_path = str_replace("/", "\\", dirname($model_namespace));
-                    $this->repository_namespace .= "\\" . $more_directory_path;
-                    $this->repository_path .= "/". $model_namespace;
-
-                    $this->repositoryHelper->setRepositoryNamespace($this->repository_namespace);
-                    $this->repositoryHelper->setRepositoryPath($this->repository_path);
+                if (strpos($model_path, "/") > -1) {
+                    $more_directory_path = str_replace("/", "\\", dirname($model_path));
+                    $repository_namespace .= "\\" . str_replace("/", "\\", dirname($model_path));
+                    $repository_path .= "/" . $more_directory_path;
                 }
 
-                $model_namespace = str_replace("/", "\\", $model_namespace);
+                $this->repositoryHelper->setRepositoryNamespace($repository_namespace);
+                $this->repositoryHelper->setRepositoryPath($repository_path);
 
                 $repository_file_content = $this->repositoryHelper->getRepositoryTemplateContents($model_name, $model_namespace, $repository_name);
                 $repository_real_path = base_path() . $this->repository_path . "/" . $repositoryRelativePathName;
 
-                if ($this->option('print')) {
+                if ($print) {
                     dump($repository_real_path);
+                    dump($repository_file_content);
                 } else {
                     (new FileMaker($repository_real_path, $repository_file_content))->generate();
                 }

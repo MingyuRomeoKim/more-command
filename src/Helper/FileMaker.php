@@ -8,7 +8,7 @@ class FileMaker
 {
     protected string $path;
     protected string $contents;
-    protected $filesystem;
+    protected Filesystem $filesystem;
 
 
     public function __construct(string $path, string $contents, Filesystem $filesystem = null)
@@ -34,14 +34,17 @@ class FileMaker
         return $this->contents;
     }
 
-    public function generate()
+    public function generate(): int|bool
     {
         $path = $this->getPath();
+
         if (!$this->filesystem->exists($path)) {
             $directoryPath = dirname($path);
+
             if (!$this->filesystem->exists($directoryPath)) {
                 $this->filesystem->makeDirectory($directoryPath,0755,true);
             }
+
             return $this->filesystem->put($path, $this->getContents());
         } else {
             return false;

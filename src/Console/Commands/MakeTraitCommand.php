@@ -15,8 +15,8 @@ class MakeTraitCommand extends BaseCommand
     public function __construct()
     {
         parent::__construct();
-        $this->trait_namespace = $this->getTraitNamespace() . "\Traits";
-        $this->trait_path = "/" . strtolower($this->getTraitNamespace()) . "/Traits";
+        $this->trait_namespace = $this->getTraitBaseNamespace();
+        $this->trait_path = $this->getTraitBasePath();
     }
 
     /**
@@ -41,6 +41,7 @@ class MakeTraitCommand extends BaseCommand
     {
         $traitName = $this->argument('traitName');
         $print = $this->option('print');
+
         if (empty($traitName)) {
             dump("You must have traitName option");
             Command::FAILURE;
@@ -60,6 +61,7 @@ class MakeTraitCommand extends BaseCommand
             $trait_real_path = base_path() . $this->trait_path . "/" . $traitName . ".php";
 
             if ($print) {
+                dump($trait_real_path);
                 dump($trait_file_content);
             } else {
                 (new FileMaker($trait_real_path, $trait_file_content))->generate();

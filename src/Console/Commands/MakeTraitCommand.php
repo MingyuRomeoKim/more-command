@@ -16,7 +16,7 @@ class MakeTraitCommand extends BaseCommand
     {
         parent::__construct();
         $this->trait_namespace = $this->getTraitNamespace() . "\Traits";
-        $this->trait_path = "/" . $this->getTraitNamespace() . "/Traits";
+        $this->trait_path = "/" . strtolower($this->getTraitNamespace()) . "/Traits";
     }
 
     /**

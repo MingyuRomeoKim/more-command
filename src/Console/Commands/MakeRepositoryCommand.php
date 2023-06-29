@@ -51,23 +51,21 @@ class MakeRepositoryCommand extends BaseCommand
         }
 
         try {
-            $this->repositoryHelper = new RepositoryHelper($this->repository_namespace, $this->repository_path, $this->base_repository_class, $this->base_repository_interface, $print);
-
-            // [step 1] check base interface & Class
-            $this->repositoryHelper->checkDefaultClassAndInterface();
-
-            // [step 2] create repository file
+            // [step 1] init properties
             if (strpos($repositoryName, "/") > -1) {
                 $dumpArray = explode("/", $repositoryName);
                 $repositoryName = array_pop($dumpArray);
                 $model_name = str_replace("Repository", "", $repositoryName);
                 $model_namespace = implode("\\", $dumpArray);
                 $this->repository_path .= "/".implode("/",$dumpArray);
-
             } else {
                 $model_name = str_replace("Repository", "", $repositoryName);
                 $model_namespace = $model_name;
             }
+
+            // [step 2] check base interface & Class
+            $this->repositoryHelper = new RepositoryHelper($this->repository_namespace, $this->repository_path, $this->base_repository_class, $this->base_repository_interface, $print);
+            $this->repositoryHelper->checkDefaultClassAndInterface();
 
             $repository_file_content = $this->repositoryHelper->getRepositoryTemplateContents($model_name, $model_namespace, $repositoryName);
             $repository_real_path = base_path() . $this->repository_path . "/" . $repositoryName . ".php";

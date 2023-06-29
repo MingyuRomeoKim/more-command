@@ -87,7 +87,7 @@ class MakeRepositoriesCommand extends BaseCommand
                 $repository_real_path = base_path() . $this->repository_path . "/" . $repositoryRelativePathName;
 
                 if ($this->option('print')) {
-                    dump($repository_file_content);
+                    dump($repository_real_path);
                 } else {
                     (new FileMaker($repository_real_path, $repository_file_content))->generate();
                 }

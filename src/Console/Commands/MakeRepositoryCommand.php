@@ -60,9 +60,9 @@ class MakeRepositoryCommand extends BaseCommand
                 $dumpArray = explode("/", $repositoryName);
                 $repositoryName = array_pop($dumpArray);
                 $model_name = str_replace("Repository", "", $repositoryName);
-                $model_namespace = implode("\\", $dumpArray);
-                $this->repository_namespace .= "\\".implode("\\",$dumpArray);
-                $this->repository_path .= "/".implode("/",$dumpArray);
+                $model_namespace = implode("\\", $dumpArray) . "\\" . $model_name;
+                $this->repository_namespace .= "\\" . implode("\\", $dumpArray);
+                $this->repository_path .= "/" . implode("/", $dumpArray);
 
                 $this->repositoryHelper->setRepositoryPath($this->repository_path);
                 $this->repositoryHelper->setRepositoryNamespace($this->repository_namespace);

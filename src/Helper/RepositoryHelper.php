@@ -30,7 +30,7 @@ class RepositoryHelper
         $this->base_repository_interface = $base_repository_interface;
         $this->print = $print;
 
-        $this->repository_default_namespace = config('more-command.repository-namespace') ?? 'App' . "/Repositories";
+        $this->repository_default_namespace = config('more-command.repository-namespace') ? config('more-command.repository-namespace'). "\Repositories" : 'App\Repositories' ;
     }
 
     /**
@@ -82,8 +82,8 @@ class RepositoryHelper
         return (new ContentMaker(
             __DIR__ . "/../" . $repositoryStubPath,
             [
-                "REPOSITORY_DEFAULT_NAMESPACE" => $this->repository_namespace,
-                "REPOSITORY_NAMESPACE" => $this->repository_default_namespace,
+                "REPOSITORY_DEFAULT_NAMESPACE" => $this->repository_default_namespace,
+                "REPOSITORY_NAMESPACE" => $this->repository_namespace,
                 "MODEL_NAME" => $model_name,
                 "MODEL_NAMESPACE" => $model_namespace,
                 "REPOSITORY_NAME" => $repository_name

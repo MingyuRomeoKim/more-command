@@ -3,8 +3,6 @@
 namespace MingyuKim\MoreCommand\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
-use MingyuKim\MoreCommand\Helper\ContentMaker;
 use MingyuKim\MoreCommand\Helper\FileMaker;
 use MingyuKim\MoreCommand\Helper\RepositoryHelper;
 
@@ -30,7 +28,7 @@ class MakeRepositoryCommand extends BaseCommand
      *
      * @var string
      */
-    protected $signature = 'make:repository {repositoryName}';
+    protected $signature = 'make:repository {--print} {repositoryName}';
 
     /**
      * The console command description.
@@ -46,7 +44,7 @@ class MakeRepositoryCommand extends BaseCommand
     public function handle()
     {
         $repositoryName = $this->argument('repositoryName');
-
+        $print = $this->option('print');
         if (empty($repositoryName)) {
             dump("You must have repositoryName option");
             Command::FAILURE;
@@ -74,7 +72,7 @@ class MakeRepositoryCommand extends BaseCommand
             $repository_file_content = $this->repositoryHelper->getRepositoryTemplateContents($model_name, $model_namespace, $repositoryName);
             $repository_real_path = base_path() . $this->repository_path . "/" . $repositoryName . ".php";
 
-            if ($this->option('print')) {
+            if ($print) {
                 dump($repository_file_content);
             } else {
                 (new FileMaker($repository_real_path, $repository_file_content))->generate();

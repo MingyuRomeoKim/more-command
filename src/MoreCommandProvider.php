@@ -4,6 +4,7 @@ namespace MingyuKim\MoreCommand;
 
 use Illuminate\Support\ServiceProvider;
 use MingyuKim\MoreCommand\Console\Commands\MakeRepositoriesCommand;
+use MingyuKim\MoreCommand\Console\Commands\MakeRepositoryCommand;
 
 class MoreCommandProvider extends ServiceProvider
 {
@@ -16,6 +17,7 @@ class MoreCommandProvider extends ServiceProvider
     {
         $this->commands([
             MakeRepositoriesCommand::class,
+            MakeRepositoryCommand::class,
         ]);
     }
 

@@ -16,7 +16,7 @@ class MakeTraitCommand extends BaseCommand
     {
         parent::__construct();
         $this->trait_namespace = $this->getTraitNamespace() . "\Traits";
-        $this->trait_path = $this->getTraitNamespace() . "/Traits";
+        $this->trait_path = "/" . $this->getTraitNamespace() . "/Traits";
     }
 
     /**
@@ -24,22 +24,22 @@ class MakeTraitCommand extends BaseCommand
      *
      * @var string
      */
-    protected $signature = 'make:trait {--print} {traityName}';
+    protected $signature = 'make:trait {--print} {traitName}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'traityName 이름의 Trait을 생성한다.
-                                traitName (예시) TestTriat || Test/TestTrait ';
+    protected $description = 'traitName 이름의 Trait을 생성한다.
+                                traitName (예시) TestTrait || Test/TestTrait ';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $traitName = $this->argument('traityName');
+        $traitName = $this->argument('traitName');
         $print = $this->option('print');
         if (empty($traitName)) {
             dump("You must have traitName option");
@@ -52,10 +52,10 @@ class MakeTraitCommand extends BaseCommand
                 $dumpArray = explode("/", $traitName);
                 $traitName = array_pop($dumpArray);
                 $this->trait_namespace .= "\\" . implode("\\", $dumpArray);
-                $this->trait_path .= $this->trait_path."/".implode("\\", $dumpArray);
+                $this->trait_path .= "/" . implode("/", $dumpArray);
             }
 
-            $this->traitHelper = new TraitHelper($this->trait_namespace,$this->trait_path);
+            $this->traitHelper = new TraitHelper($this->trait_namespace, $this->trait_path);
             $trait_file_content = $this->traitHelper->getTraitTemplateContents($traitName);
             $trait_real_path = base_path() . $this->trait_path . "/" . $traitName . ".php";
 

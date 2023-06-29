@@ -59,10 +59,10 @@ class MakeRepositoryCommand extends BaseCommand
             // [step 2] create repository file
             if (strpos($repositoryName, "/") > -1) {
                 $dumpArray = explode("/", $repositoryName);
-                $dumpRepositoryName = array_pop($dumpArray);
-                $model_name = str_replace("Repository", "", $dumpRepositoryName);
+                $repositoryName = array_pop($dumpArray);
+                $model_name = str_replace("Repository", "", $repositoryName);
                 $model_namespace = implode("\\", $dumpArray);
-                $repositoryName = $dumpRepositoryName;
+                $this->repository_path .= "/".implode("/",$dumpArray);
 
             } else {
                 $model_name = str_replace("Repository", "", $repositoryName);

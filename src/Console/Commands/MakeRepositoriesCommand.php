@@ -71,6 +71,18 @@ class MakeRepositoriesCommand extends BaseCommand
                 $model_namespace = str_replace(".php", "", $relativePathnameInModels[$index]);
 
                 $repository_name = str_replace(".php", "", $repositoryFileNames[$index]);
+
+                if ($model_name !== $model_namespace) {
+                    $more_directory_path = str_replace("/", "\\", dirname($model_namespace));
+                    $this->repository_namespace .= "\\" . $more_directory_path;
+                    $this->repository_path .= "/". $model_namespace;
+
+                    $this->repositoryHelper->setRepositoryNamespace($this->repository_namespace);
+                    $this->repositoryHelper->setRepositoryPath($this->repository_path);
+                }
+
+                $model_namespace = str_replace("/", "\\", $model_namespace);
+
                 $repository_file_content = $this->repositoryHelper->getRepositoryTemplateContents($model_name, $model_namespace, $repository_name);
                 $repository_real_path = base_path() . $this->repository_path . "/" . $repositoryRelativePathName;
 

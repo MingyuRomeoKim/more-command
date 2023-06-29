@@ -51,22 +51,27 @@ class MakeRepositoryCommand extends BaseCommand
         }
 
         try {
-            // [step 1] init properties
+            // [step 1] check base interface & Class
+            $this->repositoryHelper = new RepositoryHelper($this->repository_namespace, $this->repository_path, $this->base_repository_class, $this->base_repository_interface, $print);
+            $this->repositoryHelper->checkDefaultClassAndInterface();
+
+            // [step 2] init properties
             if (strpos($repositoryName, "/") > -1) {
                 $dumpArray = explode("/", $repositoryName);
                 $repositoryName = array_pop($dumpArray);
                 $model_name = str_replace("Repository", "", $repositoryName);
                 $model_namespace = implode("\\", $dumpArray);
+                $this->repository_namespace .= "\\".implode("\\",$dumpArray);
                 $this->repository_path .= "/".implode("/",$dumpArray);
+
+                $this->repositoryHelper->setRepositoryPath($this->repository_path);
+                $this->repositoryHelper->setRepositoryNamespace($this->repository_namespace);
             } else {
                 $model_name = str_replace("Repository", "", $repositoryName);
                 $model_namespace = $model_name;
             }
 
-            // [step 2] check base interface & Class
-            $this->repositoryHelper = new RepositoryHelper($this->repository_namespace, $this->repository_path, $this->base_repository_class, $this->base_repository_interface, $print);
-            $this->repositoryHelper->checkDefaultClassAndInterface();
-
+            // [step 3] createRepositoryContents
             $repository_file_content = $this->repositoryHelper->getRepositoryTemplateContents($model_name, $model_namespace, $repositoryName);
             $repository_real_path = base_path() . $this->repository_path . "/" . $repositoryName . ".php";
 

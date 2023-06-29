@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\File;
 class RepositoryHelper
 {
     protected string $repository_namespace;
+    protected string $repository_default_namespace;
     protected string $repository_path;
     protected string $base_repository_class;
     protected string $base_repository_interface;
@@ -28,6 +29,24 @@ class RepositoryHelper
         $this->base_repository_class = $base_repository_class;
         $this->base_repository_interface = $base_repository_interface;
         $this->print = $print;
+
+        $this->repository_default_namespace = config('more-command.repository-namespace') ?? 'App' . "/Repositories";
+    }
+
+    /**
+     * @param string $repository_path
+     */
+    public function setRepositoryPath(string $repository_path): void
+    {
+        $this->repository_path = $repository_path;
+    }
+
+    /**
+     * @param string $repository_namespace
+     */
+    public function setRepositoryNamespace(string $repository_namespace): void
+    {
+        $this->repository_namespace = $repository_namespace;
     }
 
     public function checkDefaultClassAndInterface(): void
@@ -59,19 +78,12 @@ class RepositoryHelper
     public function getRepositoryTemplateContents(string $model_name, string $model_namespace, string $repository_name): string
     {
         $repositoryStubPath = $this->getStubFilePath('class');
-        $repositoryNameSpace = $this->repository_namespace;
-        if ($model_name !== $model_namespace) {
-            $more_directory_path = str_replace("/", "\\", dirname($model_namespace));
-            $repositoryNameSpace .= "\\" . $more_directory_path;
-        }
-
-        $model_namespace = str_replace("/", "\\", $model_namespace);
 
         return (new ContentMaker(
             __DIR__ . "/../" . $repositoryStubPath,
             [
                 "REPOSITORY_DEFAULT_NAMESPACE" => $this->repository_namespace,
-                "REPOSITORY_NAMESPACE" => $repositoryNameSpace,
+                "REPOSITORY_NAMESPACE" => $this->repository_default_namespace,
                 "MODEL_NAME" => $model_name,
                 "MODEL_NAMESPACE" => $model_namespace,
                 "REPOSITORY_NAME" => $repository_name

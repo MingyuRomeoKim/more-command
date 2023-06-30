@@ -5,6 +5,7 @@ namespace MingyuKim\MoreCommand;
 use Illuminate\Support\ServiceProvider;
 use MingyuKim\MoreCommand\Console\Commands\MakeRepositoriesCommand;
 use MingyuKim\MoreCommand\Console\Commands\MakeRepositoryCommand;
+use MingyuKim\MoreCommand\Console\Commands\MakeServiceCommand;
 use MingyuKim\MoreCommand\Console\Commands\MakeTraitCommand;
 
 class MoreCommandProvider extends ServiceProvider
@@ -20,6 +21,7 @@ class MoreCommandProvider extends ServiceProvider
             MakeRepositoriesCommand::class,
             MakeRepositoryCommand::class,
             MakeTraitCommand::class,
+            MakeServiceCommand::class,
         ]);
     }
 

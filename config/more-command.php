@@ -47,4 +47,20 @@ return [
     |
     */
     'service-namespace' => 'App',
+
+    /*
+    |--------------------------------------------------------------------------
+    | View Root Path
+    |
+    | Default Value = 'resources'
+    |--------------------------------------------------------------------------
+    |
+    | This value defines the default folder path for created Views.
+    | For example if the value is 'resources', it will create Views
+    | inside 'resources/views' and class namespace will
+    | 'resources/views/{viewName}'.
+    |
+    */
+    'view-root-path' => 'resources',
+
 ];

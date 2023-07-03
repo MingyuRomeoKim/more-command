@@ -7,6 +7,7 @@ use MingyuKim\MoreCommand\Console\Commands\MakeRepositoriesCommand;
 use MingyuKim\MoreCommand\Console\Commands\MakeRepositoryCommand;
 use MingyuKim\MoreCommand\Console\Commands\MakeServiceCommand;
 use MingyuKim\MoreCommand\Console\Commands\MakeTraitCommand;
+use MingyuKim\MoreCommand\Console\Commands\MakeViewCommand;
 
 class MoreCommandProvider extends ServiceProvider
 {
@@ -22,6 +23,7 @@ class MoreCommandProvider extends ServiceProvider
             MakeRepositoryCommand::class,
             MakeTraitCommand::class,
             MakeServiceCommand::class,
+            MakeViewCommand::class,
         ]);
     }
 

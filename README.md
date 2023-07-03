@@ -55,6 +55,10 @@ __하나의 repository Class 를 생성합니다.__\
 ```
 php artisan make:repository TestRepository
 ```
+결과물:
+```
+/app/Repositories/TestRepository.php
+```
 
 ## 각각의 Trait 생성
 
@@ -65,6 +69,10 @@ __하나의 Trait File 을 생성합니다.__\
 ```
 php artisan make:trait TestTrait
 ```
+결과물:
+```
+/app/Traits/TestTrait.php
+```
 
 ## 각각의 Service 생성
 
@@ -74,6 +82,24 @@ __하나의 Service Class 를 생성합니다.__\
 예제:
 ```
 php artisan make:service TestService
+```
+결과물:
+```
+/app/Services/TestService.php
+```
+
+## 각각의 View Blade 생성
+
+__Create a View.__\
+`php artisan make:view {viewName} {--print}`
+
+예제:
+```
+php artisan make:view test
+```
+결과물:
+```
+/resources/views/test.blade.php
 ```
 
 # 라이선스

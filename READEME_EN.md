@@ -52,6 +52,10 @@ Example:
 ```
 php artisan make:repository TestRepository
 ```
+Output:
+```
+/app/Repositories/TestRepository.php
+```
 
 ## Make Each Trait
 
@@ -61,6 +65,10 @@ __Create a Trait.__\
 Example:
 ```
 php artisan make:trait TestTrait
+```
+Output:
+```
+/app/Traits/TestTrait.php
 ```
 
 ## Make Each Service
@@ -72,6 +80,23 @@ Example:
 ```
 php artisan make:service TestService
 ```
+Output:
+```
+/app/Services/TestService.php
+```
 
+## Make Each View
+
+__Create a View.__\
+`php artisan make:view {viewName} {--print}`
+
+Example:
+```
+php artisan make:view test
+```
+Output:
+```
+/resources/views/test.blade.php
+```
 # License
 The MIT License (MIT). Please see [License](LICENSE) for more information.

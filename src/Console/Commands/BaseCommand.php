@@ -9,6 +9,7 @@ abstract class BaseCommand extends Command
     const REPOSITORY_BASE_FORDER_NAME = "Repositories";
     const TRAIT_BASE_FORDER_NAME = "Traits";
     const SERVICE_BASE_FOLDER_NAME = "Services";
+    const VIEWS_BASE_FOLDER_NAME = "Views";
 
     /*
     |--------------------------------------------------------------------------
@@ -68,6 +69,21 @@ abstract class BaseCommand extends Command
     public function getServiceBasePath(): string
     {
         return "/". strtolower($this->getServiceNamespaceFronConfig()). "/". self::SERVICE_BASE_FOLDER_NAME;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | View
+    |--------------------------------------------------------------------------
+    */
+    public function getViewRootPathFromConfig(): string
+    {
+        return config('more-command.view-root-path') ?? 'resources';
+    }
+
+    public function getViewBasePath(): string
+    {
+        return "/". strtolower($this->getViewRootPathFromConfig()). "/". strtolower(self::VIEWS_BASE_FOLDER_NAME);
     }
 
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 
 namespace MingyuKim\MoreCommand\Helper;
 
@@ -15,12 +16,12 @@ class RepositoryHelper
     protected const BASE_REPOSITORY_CLASS = "BaseRepository.php";
     protected const BASE_REPOSITORY_INTERFACE = "RepositoryInterface.php";
 
-    public function __construct
-    (
-        string $repository_namespace,
-        string $repository_path,
-        string $print = ''
-    )
+    /**
+     * @param string $repository_namespace
+     * @param string $repository_path
+     * @param string $print
+     */
+    public function __construct(string $repository_namespace, string $repository_path, string $print = '')
     {
         $this->repository_namespace = $repository_namespace;
         $this->repository_path = $repository_path;
@@ -45,6 +46,9 @@ class RepositoryHelper
         $this->repository_namespace = $repository_namespace;
     }
 
+    /**
+     * @return void
+     */
     public function checkDefaultClassAndInterface(): void
     {
 
@@ -71,6 +75,12 @@ class RepositoryHelper
         }
     }
 
+    /**
+     * @param string $model_name
+     * @param string $model_namespace
+     * @param string $repository_name
+     * @return string
+     */
     public function getRepositoryTemplateContents(string $model_name, string $model_namespace, string $repository_name): string
     {
         $repositoryStubPath = $this->getStubFilePath('class');
@@ -87,6 +97,10 @@ class RepositoryHelper
         ))->render();
     }
 
+    /**
+     * @param string $type
+     * @return string
+     */
     protected function getStubFilePath(string $type = 'class'): string
     {
         $stub = match ($type) {
@@ -98,6 +112,11 @@ class RepositoryHelper
         return $stub;
     }
 
+    /**
+     * @param string $base_path
+     * @param string $file_name
+     * @return bool
+     */
     protected function checkBaseTemplateFile(string $base_path, string $file_name = ''): bool
     {
         $base_template_file = $base_path . $file_name;
@@ -109,23 +128,29 @@ class RepositoryHelper
         }
     }
 
-    protected function getBaseClassTemplateContents(): string
+    /**
+     * @return string|null
+     */
+    protected function getBaseClassTemplateContents(): ?string
     {
         $baseRepositoryClassStubPath = $this->getStubFilePath('baseClass');
 
         return (new ContentMaker(
             __DIR__ . "/../" . $baseRepositoryClassStubPath,
             ["REPOSITORY_NAMESPACE" => $this->repository_namespace]
-        ))->render();
+        ))->render() ?? null;
     }
 
-    protected function getBaseInterfaceTemplateContent(): string
+    /**
+     * @return string|null
+     */
+    protected function getBaseInterfaceTemplateContent(): ?string
     {
         $baseRepositoryInterfaceStubPath = $this->getStubFilePath('baseInterface');
 
         return (new ContentMaker(
             __DIR__ . "/../" . $baseRepositoryInterfaceStubPath,
             ["REPOSITORY_NAMESPACE" => $this->repository_namespace]
-        ))->render();
+        ))->render() ?? null;
     }
 }

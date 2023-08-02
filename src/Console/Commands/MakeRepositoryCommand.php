@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace MingyuKim\MoreCommand\Console\Commands;
 
@@ -61,15 +62,15 @@ class MakeRepositoryCommand extends BaseCommand
                 $this->repository_namespace .= "\\" . implode("\\", $dumpArray);
                 $this->repository_path .= "/" . implode("/", $dumpArray);
 
-                $this->repositoryHelper->setRepositoryPath($this->repository_path);
-                $this->repositoryHelper->setRepositoryNamespace($this->repository_namespace);
+                $this->repositoryHelper->setRepositoryPath(repository_path: $this->repository_path);
+                $this->repositoryHelper->setRepositoryNamespace(repository_namespace: $this->repository_namespace);
             } else {
                 $model_name = str_replace("Repository", "", $repositoryName);
                 $model_namespace = $model_name;
             }
 
             // [step 3] createRepositoryContents
-            $repository_file_content = $this->repositoryHelper->getRepositoryTemplateContents($model_name, $model_namespace, $repositoryName);
+            $repository_file_content = $this->repositoryHelper->getRepositoryTemplateContents(model_name: $model_name, model_namespace: $model_namespace, repository_name: $repositoryName);
             $repository_real_path = base_path() . $this->repository_path . "/" . $repositoryName . ".php";
 
             if ($print) {

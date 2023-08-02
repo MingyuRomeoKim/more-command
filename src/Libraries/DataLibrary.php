@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace MingyuKim\MoreCommand\Libraries;
 
@@ -8,6 +9,12 @@ class DataLibrary
 {
     use SingletonTrait;
 
+    /**
+     * @param string|null $beforeType
+     * @param string|null $afterType
+     * @param mixed $data
+     * @return mixed
+     */
     public function convert(?string $beforeType, ?string $afterType, mixed $data): mixed
     {
         if (!$data) return null;
@@ -24,14 +31,23 @@ class DataLibrary
         };
     }
 
+    /**
+     * @param array|null $data
+     * @param string $option
+     * @return string|null
+     */
     protected function convertArrayToString(?array $data, string $option = 'JUST_USE'): ?string
     {
         return match ($option) {
             'JUST_USE' => json_encode($data),
-            default => json_encode($data, $option)
+            default => json_encode($data, (int)$option)
         };
     }
 
+    /**
+     * @param string|null $data
+     * @return array|null
+     */
     protected function convertStringToArray(?string $data): ?array
     {
         return json_decode($data, true);

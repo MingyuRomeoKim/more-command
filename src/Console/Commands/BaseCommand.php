@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace MingyuKim\MoreCommand\Console\Commands;
 
@@ -6,8 +7,8 @@ use Illuminate\Console\Command;
 
 abstract class BaseCommand extends Command
 {
-    const REPOSITORY_BASE_FORDER_NAME = "Repositories";
-    const TRAIT_BASE_FORDER_NAME = "Traits";
+    const REPOSITORY_BASE_FOLDER_NAME = "Repositories";
+    const TRAIT_BASE_FOLDER_NAME = "Traits";
     const SERVICE_BASE_FOLDER_NAME = "Services";
     const VIEWS_BASE_FOLDER_NAME = "Views";
 
@@ -23,12 +24,12 @@ abstract class BaseCommand extends Command
 
     public function getRepositoryBaseNamespace(): string
     {
-        return $this->getRepositoryNamespaceFromConfig() . "\\" . self::REPOSITORY_BASE_FORDER_NAME;
+        return $this->getRepositoryNamespaceFromConfig() . "\\" . self::REPOSITORY_BASE_FOLDER_NAME;
     }
 
     public function getRepositoryBasePath(): string
     {
-        return "/" . strtolower($this->getRepositoryNamespaceFromConfig()) . "/" . self::REPOSITORY_BASE_FORDER_NAME;
+        return "/" . strtolower($this->getRepositoryNamespaceFromConfig()) . "/" . self::REPOSITORY_BASE_FOLDER_NAME;
     }
 
     /*
@@ -43,12 +44,12 @@ abstract class BaseCommand extends Command
 
     public function getTraitBaseNamespace(): string
     {
-        return $this->getTraitNamespaceFromConfig() . "\\" . self::TRAIT_BASE_FORDER_NAME;
+        return $this->getTraitNamespaceFromConfig() . "\\" . self::TRAIT_BASE_FOLDER_NAME;
     }
 
     public function getTraitBasePath(): string
     {
-        return "/" . strtolower($this->getTraitNamespaceFromConfig()) . "/" . self::TRAIT_BASE_FORDER_NAME;
+        return "/" . strtolower($this->getTraitNamespaceFromConfig()) . "/" . self::TRAIT_BASE_FOLDER_NAME;
     }
 
     /*

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace MingyuKim\MoreCommand\Console\Commands;
 
@@ -57,7 +58,7 @@ class MakeServiceCommand  extends BaseCommand
             }
 
             $this->serviceHelper = new ServiceHelper($this->service_namespace, $this->service_path);
-            $service_file_content = $this->serviceHelper->getServiceTemplateContents($serviceName);
+            $service_file_content = $this->serviceHelper->getServiceTemplateContents(service_name: $serviceName);
             $trait_real_path = base_path() . $this->service_path . "/" . $serviceName . ".php";
 
             if ($print) {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace MingyuKim\MoreCommand\Console\Commands;
 
@@ -11,6 +12,7 @@ class MakeTraitCommand extends BaseCommand
     protected string $trait_namespace;
     protected string $trait_path;
     protected TraitHelper $traitHelper;
+
 
     public function __construct()
     {
@@ -48,7 +50,6 @@ class MakeTraitCommand extends BaseCommand
         }
 
         try {
-            // [step 1] create trait file
             if (strpos($traitName, "/") > -1) {
                 $dumpArray = explode("/", $traitName);
                 $traitName = array_pop($dumpArray);
@@ -57,7 +58,7 @@ class MakeTraitCommand extends BaseCommand
             }
 
             $this->traitHelper = new TraitHelper($this->trait_namespace, $this->trait_path);
-            $trait_file_content = $this->traitHelper->getTraitTemplateContents($traitName);
+            $trait_file_content = $this->traitHelper->getTraitTemplateContents(trait_name: $traitName);
             $trait_real_path = base_path() . $this->trait_path . "/" . $traitName . ".php";
 
             if ($print) {

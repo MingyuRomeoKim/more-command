@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace MingyuKim\MoreCommand\Helper;
 
@@ -7,17 +8,21 @@ class TraitHelper
     protected string $trait_namespace;
     protected string $print;
 
-    public function __construct
-    (
-        string $trait_namespace,
-        string $print = ''
-    )
+    /**
+     * @param string $trait_namespace
+     * @param string $print
+     */
+    public function __construct(string $trait_namespace, string $print = '')
     {
         $this->trait_namespace = $trait_namespace;
         $this->print = $print;
     }
 
-    public function getTraitTemplateContents(string $trait_name): string
+    /**
+     * @param string $trait_name
+     * @return string|null
+     */
+    public function getTraitTemplateContents(string $trait_name): ?string
     {
         $traitStubPath = $this->getStubFilePath('default');
 
@@ -27,9 +32,13 @@ class TraitHelper
                 "TRAIT_NAMESPACE" => $this->trait_namespace,
                 "TRAIT_NAME" => $trait_name,
             ]
-        ))->render();
+        ))->render() ?? null;
     }
 
+    /**
+     * @param string $type
+     * @return string
+     */
     protected function getStubFilePath(string $type = 'default'): string
     {
         $stub = match ($type) {

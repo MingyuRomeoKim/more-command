@@ -1,4 +1,6 @@
 <?php
+declare(strict_types = 1);
+
 
 namespace MingyuKim\MoreCommand\Helper;
 
@@ -11,7 +13,12 @@ class FileMaker
     protected Filesystem $filesystem;
 
 
-    public function __construct(string $path, string $contents, Filesystem $filesystem = null)
+    /**
+     * @param string $path
+     * @param string $contents
+     * @param Filesystem|null $filesystem
+     */
+    public function __construct(string $path, string $contents, ?Filesystem $filesystem = null)
     {
         $this->path = $path;
         $this->contents = $contents;
@@ -34,6 +41,9 @@ class FileMaker
         return $this->contents;
     }
 
+    /**
+     * @return int|bool
+     */
     public function generate(): int|bool
     {
         $path = $this->getPath();

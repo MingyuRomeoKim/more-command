@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace MingyuKim\MoreCommand\Console\Commands;
 
@@ -46,8 +47,8 @@ class MakeRepositoriesCommand extends BaseCommand
 
         try {
             // [step 1] init
-            $relativePathnameInModels = $this->getFileDataInModels('relativePathname');
-            $filenameInModels = $this->getFileDataInModels('filename');
+            $relativePathnameInModels = $this->getFileDataInModels(wanted: 'relativePathname');
+            $filenameInModels = $this->getFileDataInModels(wanted: 'filename');
 
             // [step 2] create base interface & Class
             $this->repositoryHelper->checkDefaultClassAndInterface();
@@ -76,10 +77,10 @@ class MakeRepositoriesCommand extends BaseCommand
                     $repository_path .= "/" . $more_directory_path;
                 }
 
-                $this->repositoryHelper->setRepositoryNamespace($repository_namespace);
-                $this->repositoryHelper->setRepositoryPath($repository_path);
+                $this->repositoryHelper->setRepositoryNamespace(repository_namespace: $repository_namespace);
+                $this->repositoryHelper->setRepositoryPath(repository_path: $repository_path);
 
-                $repository_file_content = $this->repositoryHelper->getRepositoryTemplateContents($model_name, $model_namespace, $repository_name);
+                $repository_file_content = $this->repositoryHelper->getRepositoryTemplateContents(model_name: $model_name, model_namespace: $model_namespace, repository_name: $repository_name);
                 $repository_real_path = base_path() . $this->repository_path . "/" . $repositoryRelativePathName;
 
                 if ($print) {
@@ -97,7 +98,11 @@ class MakeRepositoriesCommand extends BaseCommand
         }
     }
 
-    public function getFileDataInModels($wanted = ''): array
+    /**
+     * @param string $wanted
+     * @return array
+     */
+    public function getFileDataInModels(string $wanted = ''): array
     {
         $files = File::allFiles(app_path('Models'));
 

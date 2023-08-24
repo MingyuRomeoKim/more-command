@@ -2,7 +2,35 @@
 
 namespace $$SERVICE_NAMESPACE$$;
 
+use $$REPOSITORY_NAMESPACE$$\$$REPOSITORY_NAME$$;
+
 class $$SERVICE_NAME$$
 {
+    protected $repository;
 
+    public function __construct($$REPOSITORY_NAME$$ $repository)
+    {
+        $this->repository = $repository;
+    }
+
+    public function getAll$$COMMON$$()
+    {
+        return $this->repository->all();
+    }
+
+    public function create$$COMMON$$(array $data)
+    {
+        return $this->repository->create($data);
+    }
+
+    public function update$$COMMON$$(mixed $id, array $data)
+    {
+        return $this->repository->update($id, $data);
+    }
+
+    public function delete$$COMMON$$(mixed $ids)
+    {
+        return $this->repository->delete($ids);
+    }
+    
 }

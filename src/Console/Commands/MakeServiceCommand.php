@@ -1,9 +1,9 @@
 <?php
-declare(strict_types=1);
 
 namespace MingyuKim\MoreCommand\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use MingyuKim\MoreCommand\Helper\FileMaker;
 use MingyuKim\MoreCommand\Helper\ServiceHelper;
 
@@ -57,8 +57,15 @@ class MakeServiceCommand  extends BaseCommand
                 $this->service_path .= "/" . implode("/", $dumpArray);
             }
 
+            // [step 2] define repository name and namespace using in service.
+            $repositoryName = Str::replace("Service","Repository",$serviceName);
+            $repositoryNameSpace = Str::replace("Services","Repositories",$this->service_namespace);
+
+            // [step 3] create service class
             $this->serviceHelper = new ServiceHelper($this->service_namespace, $this->service_path);
-            $service_file_content = $this->serviceHelper->getServiceTemplateContents(service_name: $serviceName);
+            $this->serviceHelper->setRepositoryName(repository_name: $repositoryName);
+            $this->serviceHelper->setRepositoryNamespace(repository_namespace: $repositoryNameSpace);
+            $service_file_content = $this->serviceHelper->getServiceTemplateContents($serviceName);
             $trait_real_path = base_path() . $this->service_path . "/" . $serviceName . ".php";
 
             if ($print) {

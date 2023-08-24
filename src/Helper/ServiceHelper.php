@@ -1,18 +1,21 @@
 <?php
-declare(strict_types=1);
 
 namespace MingyuKim\MoreCommand\Helper;
+
+use Illuminate\Support\Str;
 
 class ServiceHelper
 {
     protected string $service_namespace;
     protected string $print;
+    protected string $repository_namespace;
+    protected string $repository_name;
 
-    /**
-     * @param string $service_namespace
-     * @param string $print
-     */
-    public function __construct(string $service_namespace, string $print = '')
+    public function __construct
+    (
+        string $service_namespace,
+        string $print = ''
+    )
     {
         $this->service_namespace = $service_namespace;
         $this->print = $print;
@@ -31,6 +34,9 @@ class ServiceHelper
             [
                 "SERVICE_NAMESPACE" => $this->service_namespace,
                 "SERVICE_NAME" => $service_name,
+                "REPOSITORY_NAMESPACE" => $this->getRepositoryNamespace(),
+                "REPOSITORY_NAME" => $this->getRepositoryName(),
+                "COMMON" => Str::of($service_name)->replace("Service","")
             ]
         ))->render() ?? null;
     }
@@ -46,5 +52,37 @@ class ServiceHelper
         };
 
         return $stub;
+    }
+
+    /**
+     * @param string $repository_namespace
+     */
+    public function setRepositoryNamespace(string $repository_namespace): void
+    {
+        $this->repository_namespace = $repository_namespace;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRepositoryNamespace(): string
+    {
+        return $this->repository_namespace ?? '';
+    }
+
+    /**
+     * @param string $repository_name
+     */
+    public function setRepositoryName(string $repository_name): void
+    {
+        $this->repository_name = $repository_name;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRepositoryName(): string
+    {
+        return $this->repository_name ?? '';
     }
 }

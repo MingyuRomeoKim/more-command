@@ -26,7 +26,7 @@ class MakeTraitCommand extends BaseCommand
      *
      * @var string
      */
-    protected $signature = 'make:trait {--print} {traitName}';
+    protected $signature = 'make:trait {--print} {traitName} {--s}';
 
     /**
      * The console command description.
@@ -34,7 +34,8 @@ class MakeTraitCommand extends BaseCommand
      * @var string
      */
     protected $description = 'traitName 이름의 Trait을 생성한다.
-                                traitName (예시) TestTrait || Test/TestTrait ';
+                                traitName (예시) TestTrait || Test/TestTrait 
+                                singleton (예시) php artisan make:trait TestSingleTonTrait --s';
 
     /**
      * Execute the console command.
@@ -43,6 +44,7 @@ class MakeTraitCommand extends BaseCommand
     {
         $traitName = $this->argument('traitName');
         $print = $this->option('print');
+        $isSingleTon = $this->option('s');
 
         if (empty($traitName)) {
             dump("You must have traitName option");
@@ -57,15 +59,15 @@ class MakeTraitCommand extends BaseCommand
                 $this->trait_path .= "/" . implode("/", $dumpArray);
             }
 
-            $this->traitHelper = new TraitHelper($this->trait_namespace, $this->trait_path);
-            $trait_file_content = $this->traitHelper->getTraitTemplateContents(trait_name: $traitName);
+            $this->traitHelper = new TraitHelper(trait_namespace: $this->trait_namespace);
+            $trait_file_content = $this->traitHelper->getTraitTemplateContents(trait_name: $traitName, isSingleTon: $isSingleTon);
             $trait_real_path = base_path() . $this->trait_path . "/" . $traitName . ".php";
 
             if ($print) {
                 dump($trait_real_path);
                 dump($trait_file_content);
             } else {
-                (new FileMaker($trait_real_path, $trait_file_content))->generate();
+                (new FileMaker(path: $trait_real_path, contents: $trait_file_content))->generate();
             }
         } catch (\Exception $exception) {
             dump($exception->getMessage());

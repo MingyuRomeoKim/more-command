@@ -6,29 +6,27 @@ namespace MingyuKim\MoreCommand\Helper;
 class TraitHelper
 {
     protected string $trait_namespace;
-    protected string $print;
 
     /**
      * @param string $trait_namespace
-     * @param string $print
      */
-    public function __construct(string $trait_namespace, string $print = '')
+    public function __construct(string $trait_namespace)
     {
         $this->trait_namespace = $trait_namespace;
-        $this->print = $print;
     }
 
     /**
      * @param string $trait_name
      * @return string|null
      */
-    public function getTraitTemplateContents(string $trait_name): ?string
+    public function getTraitTemplateContents(string $trait_name, bool $isSingleTon = false): ?string
     {
-        $traitStubPath = $this->getStubFilePath('default');
+
+        $traitStubPath = $isSingleTon ? $this->getStubFilePath('singleTon') :$this->getStubFilePath('default');
 
         return (new ContentMaker(
-            __DIR__ . "/../" . $traitStubPath,
-            [
+            path: __DIR__ . "/../" . $traitStubPath,
+            replaces: [
                 "TRAIT_NAMESPACE" => $this->trait_namespace,
                 "TRAIT_NAME" => $trait_name,
             ]
@@ -42,7 +40,8 @@ class TraitHelper
     protected function getStubFilePath(string $type = 'default'): string
     {
         $stub = match ($type) {
-            'default' => '/Stub/Trait/trait.stub'
+            'default' => '/Stub/Trait/trait.stub',
+            'singleTon' => '/Stub/Trait/singleton-trait.stub'
         };
 
         return $stub;

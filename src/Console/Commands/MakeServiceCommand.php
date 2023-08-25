@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace MingyuKim\MoreCommand\Console\Commands;
 
@@ -7,7 +8,7 @@ use Illuminate\Support\Str;
 use MingyuKim\MoreCommand\Helper\FileMaker;
 use MingyuKim\MoreCommand\Helper\ServiceHelper;
 
-class MakeServiceCommand  extends BaseCommand
+class MakeServiceCommand extends BaseCommand
 {
     protected string $service_namespace;
     protected string $service_path;
@@ -58,21 +59,21 @@ class MakeServiceCommand  extends BaseCommand
             }
 
             // [step 2] define repository name and namespace using in service.
-            $repositoryName = Str::replace("Service","Repository",$serviceName);
-            $repositoryNameSpace = Str::replace("Services","Repositories",$this->service_namespace);
+            $repositoryName = Str::replace("Service", "Repository", $serviceName);
+            $repositoryNameSpace = Str::replace("Services", "Repositories", $this->service_namespace);
 
             // [step 3] create service class
-            $this->serviceHelper = new ServiceHelper($this->service_namespace, $this->service_path);
+            $this->serviceHelper = new ServiceHelper(service_namespace: $this->service_namespace);
             $this->serviceHelper->setRepositoryName(repository_name: $repositoryName);
             $this->serviceHelper->setRepositoryNamespace(repository_namespace: $repositoryNameSpace);
-            $service_file_content = $this->serviceHelper->getServiceTemplateContents($serviceName);
+            $service_file_content = $this->serviceHelper->getServiceTemplateContents(service_name: $serviceName);
             $trait_real_path = base_path() . $this->service_path . "/" . $serviceName . ".php";
 
             if ($print) {
                 dump($trait_real_path);
                 dump($service_file_content);
             } else {
-                (new FileMaker($trait_real_path, $service_file_content))->generate();
+                (new FileMaker(path: $trait_real_path, contents: $service_file_content))->generate();
             }
         } catch (\Exception $exception) {
             dump($exception->getMessage());

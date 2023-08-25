@@ -35,7 +35,7 @@ class ContentMaker
         $contents = file_get_contents($this->getPath());
 
         foreach ($this->replaces as $search => $replace) {
-            $contents = str_replace('$$' . strtoupper($search) . '$$', $replace, $contents);
+            $contents = str_replace('$$' . strtoupper($search) . '$$', (string) $replace, $contents);
         }
 
         return $contents ?? null;

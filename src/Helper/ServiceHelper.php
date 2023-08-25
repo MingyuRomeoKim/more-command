@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace MingyuKim\MoreCommand\Helper;
 
@@ -7,18 +8,12 @@ use Illuminate\Support\Str;
 class ServiceHelper
 {
     protected string $service_namespace;
-    protected string $print;
     protected string $repository_namespace;
     protected string $repository_name;
 
-    public function __construct
-    (
-        string $service_namespace,
-        string $print = ''
-    )
+    public function __construct(string $service_namespace)
     {
         $this->service_namespace = $service_namespace;
-        $this->print = $print;
     }
 
     /**
@@ -30,13 +25,13 @@ class ServiceHelper
         $stubPath = $this->getStubFilePath('default');
 
         return (new ContentMaker(
-            __DIR__ . "/../" . $stubPath,
-            [
+            path: __DIR__ . "/../" . $stubPath,
+            replaces: [
                 "SERVICE_NAMESPACE" => $this->service_namespace,
                 "SERVICE_NAME" => $service_name,
                 "REPOSITORY_NAMESPACE" => $this->getRepositoryNamespace(),
                 "REPOSITORY_NAME" => $this->getRepositoryName(),
-                "COMMON" => Str::of($service_name)->replace("Service","")
+                "COMMON" => Str::of($service_name)->replace("Service", "")
             ]
         ))->render() ?? null;
     }

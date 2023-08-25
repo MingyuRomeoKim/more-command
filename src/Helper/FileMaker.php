@@ -1,7 +1,6 @@
 <?php
 declare(strict_types = 1);
 
-
 namespace MingyuKim\MoreCommand\Helper;
 
 use Illuminate\Filesystem\Filesystem;

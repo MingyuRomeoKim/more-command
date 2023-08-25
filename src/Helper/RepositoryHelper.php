@@ -1,5 +1,5 @@
 <?php
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace MingyuKim\MoreCommand\Helper;
 
@@ -10,7 +10,7 @@ class RepositoryHelper
     protected string $repository_namespace;
     protected string $repository_default_namespace;
     protected string $repository_path;
-    protected string $print;
+    protected mixed $print;
 
     protected const BASE_TEMPLATE_PATH = "BaseTemplate";
     protected const BASE_REPOSITORY_CLASS = "BaseRepository.php";
@@ -19,9 +19,9 @@ class RepositoryHelper
     /**
      * @param string $repository_namespace
      * @param string $repository_path
-     * @param string $print
+     * @param mixed $print
      */
-    public function __construct(string $repository_namespace, string $repository_path, string $print = '')
+    public function __construct(string $repository_namespace, string $repository_path, mixed $print)
     {
         $this->repository_namespace = $repository_namespace;
         $this->repository_path = $repository_path;
@@ -54,20 +54,20 @@ class RepositoryHelper
 
         $base_template_file = base_path() . $this->repository_path . "/" . self::BASE_TEMPLATE_PATH . "/";
 
-        if (!$this->checkBaseTemplateFile($base_template_file, self::BASE_REPOSITORY_CLASS)) {
+        if (!$this->checkBaseTemplateFile(base_path: $base_template_file, file_name: self::BASE_REPOSITORY_CLASS)) {
             $baseRepositoryClassContent = $this->getBaseClassTemplateContents();
             $base_repository_class_path = $base_template_file . self::BASE_REPOSITORY_CLASS;
-            $result = (new FileMaker($base_repository_class_path, $baseRepositoryClassContent))->generate();
+            $result = (new FileMaker(path: $base_repository_class_path, contents: $baseRepositoryClassContent))->generate();
 
             if ($this->print) {
                 dump("Base_repository_class Make Result :: " . $result);
             }
         }
 
-        if (!$this->checkBaseTemplateFile($base_template_file, self::BASE_REPOSITORY_INTERFACE)) {
+        if (!$this->checkBaseTemplateFile(base_path: $base_template_file, file_name: self::BASE_REPOSITORY_INTERFACE)) {
             $baseRepositoryInterfaceContent = $this->getBaseInterfaceTemplateContent('');
             $base_repository_interface_path = $base_template_file . self::BASE_REPOSITORY_INTERFACE;
-            $result = (new FileMaker($base_repository_interface_path, $baseRepositoryInterfaceContent))->generate();
+            $result = (new FileMaker(path: $base_repository_interface_path, contents: $baseRepositoryInterfaceContent))->generate();
 
             if ($this->print) {
                 dump("Base_repository_interface Make Result :: " . $result);
@@ -83,11 +83,11 @@ class RepositoryHelper
      */
     public function getRepositoryTemplateContents(string $model_name, string $model_namespace, string $repository_name): string
     {
-        $repositoryStubPath = $this->getStubFilePath('class');
+        $repositoryStubPath = $this->getStubFilePath(type: 'class');
 
         return (new ContentMaker(
-            __DIR__ . "/../" . $repositoryStubPath,
-            [
+            path: __DIR__ . "/../" . $repositoryStubPath,
+            replaces: [
                 "REPOSITORY_DEFAULT_NAMESPACE" => $this->repository_default_namespace,
                 "REPOSITORY_NAMESPACE" => $this->repository_namespace,
                 "MODEL_NAME" => $model_name,
@@ -136,8 +136,8 @@ class RepositoryHelper
         $baseRepositoryClassStubPath = $this->getStubFilePath('baseClass');
 
         return (new ContentMaker(
-            __DIR__ . "/../" . $baseRepositoryClassStubPath,
-            ["REPOSITORY_NAMESPACE" => $this->repository_namespace]
+            path: __DIR__ . "/../" . $baseRepositoryClassStubPath,
+            replaces: ["REPOSITORY_NAMESPACE" => $this->repository_namespace]
         ))->render() ?? null;
     }
 
@@ -149,8 +149,8 @@ class RepositoryHelper
         $baseRepositoryInterfaceStubPath = $this->getStubFilePath('baseInterface');
 
         return (new ContentMaker(
-            __DIR__ . "/../" . $baseRepositoryInterfaceStubPath,
-            ["REPOSITORY_NAMESPACE" => $this->repository_namespace]
+            path: __DIR__ . "/../" . $baseRepositoryInterfaceStubPath,
+            replaces: ["REPOSITORY_NAMESPACE" => $this->repository_namespace]
         ))->render() ?? null;
     }
 }

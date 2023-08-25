@@ -50,7 +50,7 @@ class MakeRepositoryCommand extends BaseCommand
 
         try {
             // [step 1] check base interface & Class
-            $this->repositoryHelper = new RepositoryHelper($this->repository_namespace, $this->repository_path, $print);
+            $this->repositoryHelper = new RepositoryHelper(repository_namespace: $this->repository_namespace, repository_path: $this->repository_path, print: $print);
             $this->repositoryHelper->checkDefaultClassAndInterface();
 
             // [step 2] init properties
@@ -77,7 +77,7 @@ class MakeRepositoryCommand extends BaseCommand
                 dump($repository_file_content);
                 dump($repository_real_path);
             } else {
-                (new FileMaker($repository_real_path, $repository_file_content))->generate();
+                (new FileMaker(path: $repository_real_path,contents: $repository_file_content))->generate();
             }
         } catch (\Exception $exception) {
             dump($exception->getMessage());

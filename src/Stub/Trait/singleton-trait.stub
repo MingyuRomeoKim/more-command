@@ -1,0 +1,21 @@
+<?php
+
+namespace $$TRAIT_NAMESPACE$$;
+
+trait $$TRAIT_NAME$$
+{
+    private static $instanse = null;
+
+    /**
+     *
+     * @return self
+     */
+    static function getInstance()
+    {
+        if (self::$instanse == null) {
+            self::$instanse = new self;
+        }
+
+        return self::$instanse;
+    }
+}

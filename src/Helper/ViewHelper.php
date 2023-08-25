@@ -23,7 +23,7 @@ class ViewHelper
         $viewStubPath = $this->getStubFilePath('default');
 
         return (new ContentMaker(
-            __DIR__ . "/../" . $viewStubPath, [])
+            path: __DIR__ . "/../" . $viewStubPath, replaces: [])
         )->render() ?? null;
     }
 

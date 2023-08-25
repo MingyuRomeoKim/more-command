@@ -46,7 +46,7 @@ php artisan make:repositories
 ## Make Each Repository
 
 __Create a repository Class.__\
-`php artisan make:repository {repositoryName} {--print}`
+`php artisan make:repository {--print} {repositoryName}`
 
 Example:
 ```
@@ -60,7 +60,7 @@ Output:
 ## Make Each Trait
 
 __Create a Trait.__\
-`php artisan make:trait {triatName} {--print}`
+`php artisan make:trait {--print} {triatName}`
 
 Example:
 ```
@@ -74,7 +74,7 @@ Output:
 ## Make Each Service
 
 __Create a Service.__\
-`php artisan make:service {serviceName} {--print}`
+`php artisan make:service {--print} {serviceName}`
 
 Example:
 ```
@@ -88,7 +88,7 @@ Output:
 ## Make Each View
 
 __Create a View.__\
-`php artisan make:view {viewName} {--print}`
+`php artisan make:view {--print} {viewName}`
 
 Example:
 ```

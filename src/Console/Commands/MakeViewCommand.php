@@ -56,7 +56,7 @@ class MakeViewCommand extends BaseCommand
                 $this->view_path .= "/" . implode("/", $dumpArray);
             }
 
-            $this->viewHelper = new ViewHelper($print);
+            $this->viewHelper = new ViewHelper();
             $view_file_content = $this->viewHelper->getViewTemplateContents();
             $view_real_path = base_path() . $this->view_path . "/" . $viewName . ".blade.php";
 
